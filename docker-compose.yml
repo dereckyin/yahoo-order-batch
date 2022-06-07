@@ -1,0 +1,22 @@
+version: '3.3'
+
+services:
+  web:
+    build: ./project
+    command: bash -c "cron && uvicorn app.main:app --reload --workers 1 --host 0.0.0.0 --port 8000"
+    volumes:
+      - ./project:/usr/src/app
+    ports:
+      - 8004:8000
+    environment:
+      - MYHOST=${MYHOST}
+      - MYUSER=${MYUSER}
+      - MYPASSWD=${MYPASSWD}
+      - MYDB=${MYDB}
+      - MYPORT=${MYPORT}
+      - AGENT_HOST=${AGENT_HOST}
+      - AGENT_HOST_PORT=${AGENT_HOST_PORT}
+      - LINE_BOT_KEY=${LINE_BOT_KEY}
+      - LINE_BOT_ID=${LINE_BOT_ID}
+      - SHARED_SECRET=${SHARED_SECRET}
+      - API_KEY=${API_KEY}

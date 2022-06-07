@@ -1,0 +1,6 @@
+*/5 * * * *  /usr/bin/curl --silent http://localhost:8000/order_query
+0 2 * * *  /usr/bin/curl --silent http://localhost:8000/order_query_yesterday
+*/10 * * * *  /usr/bin/curl --silent http://localhost:8000/query_cancel?sDay=0
+*/20 * * * *  /usr/bin/curl --silent http://localhost:8000/query_cancel?sDay=7
+*/30 * * * *  /usr/bin/curl --silent http://localhost:8000/query_cancel?sDay=14
+0 */1 * * *  /usr/bin/curl --silent http://localhost:8000/query_cancel?sDay=21

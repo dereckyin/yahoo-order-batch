@@ -1,0 +1,29 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: k8s-cronjob-pvc-example
+spec:
+  schedule: "*/1 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          containers:
+          - name: k8s-cronjob-pvc-example
+            image: dereckyin/k8s-cronjob-pvc-example:v1
+            args:
+            - /bin/sh
+            - -c
+            - ls /data
+            - date; echo Hello from the Kubernetes cluster
+            volumeMounts:
+            - mountPath: /data
+              name: crawl-data
+          restartPolicy: OnFailure
+          volumes:
+          - name: crawl-data
+            hostPath:
+              # directory location on host
+              path: /data
+              # this field is optional
+              type: Directory
