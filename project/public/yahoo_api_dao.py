@@ -383,10 +383,17 @@ class YahooApiDao(OracleUtils):
 
                 for _detail in od:
                     _product = _detail['OrderProductList']['Product']
-                    if self.is_order_detail_exists(order['@Id'], _detail['@Id'], _product['@Id']):
-                        self.update_order_detail(order, _product, _detail)
-                    else:
-                        self.insert_order_detail(order, _product, _detail)
+                    if isinstance(_product, dict):
+                        if self.is_order_detail_exists(order['@Id'], _detail['@Id'], _product['@Id']):
+                            self.update_order_detail(order, _product, _detail)
+                        else:
+                            self.insert_order_detail(order, _product, _detail)
+                    if isinstance(_product, list):
+                        for _pd in _product:
+                            if self.is_order_detail_exists(order['@Id'], _detail['@Id'], _pd['@Id']):
+                                self.update_order_detail(order, _pd, _detail)
+                            else:
+                                self.insert_order_detail(order, _pd, _detail)
         except Exception as e:
             self.con.rollback()
             raise e

@@ -158,10 +158,13 @@ def order_detail(master):
 def save_order(master, detail):
     with tracer.start_as_current_span("save_order"):
         with YahooApiDao() as operations_dao:
-            operations_dao.order_main_store(master, detail)
-            operations_dao.order_master_store(master, detail)
-            operations_dao.order_detail_store(master, detail)
-            operations_dao.commit_changes()
+            try:
+                operations_dao.order_main_store(master, detail)
+                operations_dao.order_master_store(master, detail)
+                operations_dao.order_detail_store(master, detail)
+                operations_dao.commit_changes()
+            except Exception as e:
+                batchfailnotify("Yahoo error save_order")
 
 def cancel_order(master):
     with tracer.start_as_current_span("cancel_order"):
