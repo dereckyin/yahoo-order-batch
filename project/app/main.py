@@ -133,11 +133,17 @@ def total_count_by_transaction(r):
 def order_master(order_list):
     with tracer.start_as_current_span("order_master"):
         master = []
-        for order in order_list:
-            receipt = yh_utils.order_query_master(order['@Id'])
-            logging.info('order_master_store:' + order['@Id'] + ' ' + str(receipt))
+        if not isinstance(order_list, (list)):
+            receipt = yh_utils.order_query_master(order_list['@Id'])
+            #logging.info('order_master_store:' + order_list['@Id'] + ' ' + str(receipt))
             if receipt['Response']['@Status'] == "ok":
                 master.append(receipt['Response']['Transaction'])
+        else:
+            for order in order_list:
+                receipt = yh_utils.order_query_master(order['@Id'])
+                #logging.info('order_master_store:' + order['@Id'] + ' ' + str(receipt))
+                if receipt['Response']['@Status'] == "ok":
+                    master.append(receipt['Response']['Transaction'])
         return master
 
 def order_detail(master):
@@ -283,8 +289,8 @@ def query_order(datestr : str):
         cnt = total_count_by_transaction(r)
 
         if cnt > 0:
-            for i in range(1,cnt,100):
-                orders = yh_utils.order_query(datestr=datestr, position=i, count=100, order_type="StoreDelivery")
+            for i in range(0,cnt,100):
+                orders = yh_utils.order_query(datestr=datestr, position=i+1, count=100, order_type="StoreDelivery")
                 master = order_master(orders['Response']['TransactionList']['Transaction'])
                 detail = order_detail(master)
 
@@ -297,8 +303,8 @@ def query_order(datestr : str):
         cnt = total_count_by_transaction(r)
 
         if cnt > 0:
-            for i in range(1,cnt,100):
-                orders = yh_utils.order_query(datestr=datestr, position=i, count=100, order_type="HomeDelivery")
+            for i in range(0,cnt,100):
+                orders = yh_utils.order_query(datestr=datestr, position=i+1, count=100, order_type="HomeDelivery")
                 master = order_master(orders['Response']['TransactionList']['Transaction'])
                 detail = order_detail(master)
 
@@ -319,8 +325,8 @@ def query_cancel(sDay : int = 0):
         cnt = total_count_by_transaction(r)
 
         if cnt > 0:
-            for i in range(1,cnt,100):
-                orders = yh_utils.order_cancel(datestr_s=start_date, datestr_e=end_date, position=i, count=100)
+            for i in range(0,cnt,100):
+                orders = yh_utils.order_cancel(datestr_s=start_date, datestr_e=end_date, position=i+1, count=100)
                 master = orders['Response']['TransactionList']['Transaction']
                 #logging.info('order_cancel:' + str(master))
     
