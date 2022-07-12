@@ -347,7 +347,10 @@ async def order_query(order_date: str = ""):
         if not order_date:
             order_date = datetime.today().strftime('%Y/%m/%d')
 
-        query_order(order_date)
+        try:
+            query_order(order_date)
+        except Exception as e:
+            batchfailnotify("Yahoo error order_query")
 
 #if __name__ == '__main__':
 settingLog()
